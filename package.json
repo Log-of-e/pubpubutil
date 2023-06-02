@@ -5,8 +5,13 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
+    "build": "npx tsc",
+    "start": "npx tsx dist/index.js",
     "test": "mocha",
-    "do:import": "NODE_OPTIONS=' --trace-warnings'  npx tsx ./index.js >>importPub99.log 2>&1"
+    "dev2": "concurrently \"npx tsc --watch\" \"nodemon -- --loader tsx dist/index.js\"",
+    "dev": "npx tsx watch src/index.ts",
+    "clean": "npx tsc -b --clean && npx tsc -b --force",
+    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx ./index.js >>importPub99.log 2>&1"
   },
   "author": "Nesim",
   "license": "ISC",
@@ -16,6 +21,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.2.5",
+    "concurrently": "^8.1.0",
+    "nodemon": "^2.0.22",
     "typescript": "^5.1.3"
   }
 }
