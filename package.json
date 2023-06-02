@@ -8,10 +8,9 @@
     "build": "npx tsc",
     "start": "npx tsx dist/index.js",
     "test": "mocha",
-    "dev2": "concurrently \"npx tsc --watch\" \"nodemon -- --loader tsx dist/index.js\"",
     "dev": "npx tsx watch src/index.ts",
     "clean": "npx tsc -b --clean && npx tsc -b --force",
-    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx ./index.js >>importPub99.log 2>&1"
+    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx src/index.js >>importPub99.log 2>&1"
   },
   "author": "Nesim",
   "license": "ISC",
