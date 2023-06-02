@@ -1,0 +1,21 @@
+{
+  "name": "pubpubtest01",
+  "version": "1.0.0",
+  "description": "test client api for pubpub",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "do:import": "NODE_OPTIONS=' --trace-warnings'  npx tsx ./index.js >>importPub99.log 2>&1"
+  },
+  "author": "Nesim",
+  "license": "ISC",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "pubpub-client": "^0.7.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5",
+    "typescript": "^5.1.3"
+  }
+}
