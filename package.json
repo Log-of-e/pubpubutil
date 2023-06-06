@@ -10,7 +10,7 @@
     "test": "mocha",
     "dev": "npx tsx watch src/index.ts",
     "clean": "npx tsc -b --clean && npx tsc -b --force",
-    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx src/index.js >>importPub99.log 2>&1"
+    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx src/index.ts >>importPub99.log 2>&1"
   },
   "author": "Nesim",
   "license": "ISC",
@@ -22,6 +22,7 @@
     "@types/node": "^20.2.5",
     "concurrently": "^8.1.0",
     "nodemon": "^2.0.22",
+    "tsx": "^3.12.7",
     "typescript": "^5.1.3"
   }
 }

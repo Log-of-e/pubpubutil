@@ -8,7 +8,7 @@ const communityUrl = 'https://testabcd123456789.pubpub.org'
 const communityId = 'fce230e8-c211-40e1-8a34-60a65c1aad08'
 
 process.env.COMMUNITY_ID = communityId
-process.env.COMMUNITY_URL= communityUrl
+process.env.COMMUNITY_URL = communityUrl
 process.env.EMAIL = 'nesim.engineer@gmail.com'
 process.env.PASSWORD = 'iY7FNzLh8mc*%5Dv'
 
@@ -19,42 +19,42 @@ async function mainGetPubs() {
     await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
 
     const pubs = await pubpub.pub.getMany()
-    console.log("pubs keys",Object.keys(pubs))
+    console.log("pubs keys", Object.keys(pubs))
     console.log("--- ---")
     console.log("--- ---")
     console.log("--- ---")
-    console.log({pubs})
+    console.log({ pubs })
     // console.log("--- ---")
     // console.log("--- ---")
     // console.log("--- ---")
     // console.log("{pubs}", JSON.stringify(pubs))
-  
+
 
     await pubpub.logout()
     console.log("LOGOUT")
-  
+
   } catch (error) {
     console.error("Encountered error")
-    console.error(error)    
+    console.error(error)
   }
 
-} 
+}
 
 async function main() {
   try {
     await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
 
     const pubs = await pubpub.pub.getMany()
-    console.log("pubs keys",Object.keys(pubs))
+    console.log("pubs keys", Object.keys(pubs))
     // console.log({pubs})
     // console.log("{pubs}", JSON.stringify(pubs))
-  
 
-    const fileName="May29Test01.pdf";
-    const mimeType="application/pdf"
+
+    const fileName = "May29Test01.pdf";
+    const mimeType = "application/pdf"
     const pdf = await fs.readFileSync('/Users/nesim/Downloads/Report03.pdf')
     const fileOrPath = pdf
-    
+
     // @ts-ignore
     const uploadedFile = await pubpub.uploadFile!({
       file: fileOrPath,
@@ -62,7 +62,7 @@ async function main() {
       mimeType,
     })
 
-    console.log( "uploadedFile ::", uploadedFile )
+    console.log("uploadedFile ::", uploadedFile)
 
     // const uploadData =  {
     //   url: uploadedFile.url,
@@ -73,13 +73,13 @@ async function main() {
 
     await pubpub.logout()
     console.log("LOGOUT")
-  
+
   } catch (error) {
     console.error("Encountered error")
-    console.error(error)    
+    console.error(error)
   }
 
-} 
+}
 
 
 async function mainImportPubs() {
@@ -113,25 +113,25 @@ async function mainImportPubs() {
   // const testId = '10a6ef16-4d19-4e9f-93bf-0ae1a5e247bc'
   const testUrl = 'pub/k7i89nid/draft'
   // const testId = 'fced44a5-ce71-46e3-ae82-df2a37706a8b'
-  
+
   try {
-  
+
   } catch (error) {
     console.error("Encountered error")
-    console.error(error)    
+    console.error(error)
   }
 
 
   try {
     await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
     const pubs = await pubpub.pub.getMany()
-    console.log("pubs keys",Object.keys(pubs))
+    console.log("pubs keys", Object.keys(pubs))
 
-    const docxMimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-    const pdfMimeType="application/pdf"
+    const docxMimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    const pdfMimeType = "application/pdf"
     const pdfURL = await fs.readFileSync('/Users/nesim/Downloads/Report03.pdf')
 
-    const filename02= await fs.readFileSync('/Users/nesim/Downloads/Report03.docx')
+    const filename02 = await fs.readFileSync('/Users/nesim/Downloads/Report03.docx')
 
 
     const imported = await pubpub.pub.hacks.import(
@@ -168,12 +168,92 @@ async function mainImportPubs() {
 
 
 
-} 
+}
 
 
-mainGetPubs()
+
+async function createAPub() {
+  try {
+    await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
+    const p = pubpub
+
+    const pubs = await pubpub.pub.getMany()
+    console.log("pubs keys", Object.keys(pubs))
+
+    const pub01 = await pubpub.pub.create()
+    console.log("typeof pub01", typeof pub01)
+    if (typeof pub01 == "object") console.log("Object.keys(pub01) ::", Object.keys(pub01))
+
+    const { id, slug } = pub01 as { id: string, slug: string };
+    console.log("======  =====", { id, slug })
+    const title = "Review About X by AA";
+    const pubMod = await p.pub.modify(id, {
+      title: "Review About X by AA",
+      description: "Eval of X by AA",
+      slug,
+      // customPublishedAt,
+      htmlTitle: title,
+      // license,
+      // doi,
+      // nodeLabels,
+      // pubEdgeDisplay,
+      // pubHeaderTheme,
+      // citationStyle
+    })
+
+
+    const pubUrl = `pub/${slug}/draft`
+
+    const docFile = await fs.readFileSync('/Users/nesim/Downloads/Report03.docx')
+
+    const imported = await pubpub.pub.hacks.import(
+      pubUrl,
+      [
+        {
+          file: docFile,
+          fileName: 'basic03.docx',
+          mimeType:
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        },
+      ],
+      // (doc, schema) => {
+      //   console.dir(doc, { depth: 5 })
+      //   const newDoc = doc.addToEnd(
+      //     schema.nodes.paragraph.create(
+      //       { id: 'test-id' },
+      //       schema.text('manually insterted text')
+      //     )
+      //   )
+      //   console.dir(newDoc, { depth: 5 })
+      //   return newDoc
+      // }
+    )
+    if (typeof imported == "object") console.log("Object.keys(imported) ::", Object.keys(imported))
+
+    await pubpub.logout()
+    console.log("LOGOUT")
+
+
+
+  } catch (error) {
+    console.error(error)
+  }
+
+}
+
+
+
+
+
+function parseDocForTitle(){
+  const titleSearchExpression="Evaluation of ___  by _____ for The Unjournal"
+
+}
+
+// mainGetPubs()
 // main()
 // mainImportPubs();
+await createAPub()
 
 console.log("DONE");
 /**
