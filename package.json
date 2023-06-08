@@ -16,10 +16,12 @@
   "license": "ISC",
   "dependencies": {
     "esm": "^3.2.25",
-    "pubpub-client": "^0.7.0"
+    "pubpub-client": "^0.7.0",
+    "textract": "^2.5.0"
   },
   "devDependencies": {
     "@types/node": "^20.2.5",
+    "@types/textract": "^2.4.2",
     "concurrently": "^8.1.0",
     "nodemon": "^2.0.22",
     "tsx": "^3.12.7",
