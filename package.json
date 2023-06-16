@@ -10,16 +10,19 @@
     "test": "mocha",
     "dev": "npx tsx watch src/index.ts",
     "clean": "npx tsc -b --clean && npx tsc -b --force",
-    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx src/index.ts >>importPub99.log 2>&1"
+    "run:debug": "NODE_OPTIONS=' --trace-warnings'  npx tsx src/index.ts >>log/importPub99.log 2>&1"
   },
   "author": "Nesim",
   "license": "ISC",
   "dependencies": {
-    "esm": "^3.2.25",
-    "pubpub-client": "^0.7.0",
+    "config": "^3.3.9",
+    "crypto-js": "^4.1.1",
+    "hjson": "^3.2.2",
+    "pubpub-client": "^0.8.0",
     "textract": "^2.5.0"
   },
   "devDependencies": {
+    "@types/config": "^3.3.0",
     "@types/node": "^20.2.5",
     "@types/textract": "^2.4.2",
     "concurrently": "^8.1.0",
