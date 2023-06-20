@@ -1,22 +1,56 @@
 import * as fs from 'node:fs';
 import { PubPub } from 'pubpub-client'
+// import { PubPub as Pub02} from './api2.js'
 // import { fileURLToPath } from 'node:url'
 import { fileURLToPath } from 'url'
+import config  from "config"; //use default export from node-config
+import * as textract from 'textract'
 
 
-const communityUrl = 'https://testabcd123456789.pubpub.org'
-const communityId = 'fce230e8-c211-40e1-8a34-60a65c1aad08'
+const  communityUrl = config.get("communityUrl") as string
+const  communityId  = config.get("communityId") as string
+const  email  = config.get("email") as string
+const  password  = config.get("password") as string
 
-process.env.COMMUNITY_ID = communityId
-process.env.COMMUNITY_URL = communityUrl
-process.env.EMAIL = 'nesim.engineer@gmail.com'
-process.env.PASSWORD = 'iY7FNzLh8mc*%5Dv'
 
 const pubpub = new PubPub(communityId, communityUrl)
 
+/** 
+async function troubleshootlogin(){
+  try {
+    let password = "8p!*u%E9UaTF3Ktt";
+    console.log("email :::", email);
+    console.log("TTTTTTTT SSSS :::", password);
+    // return;
+    const pxx = new Pub02(communityId, communityUrl);
+    await pxx.login(email, password);
+    console.log('logged in')
+
+    let cookie00 = pxx.cookie
+    console.log(' = cookie::', cookie00);
+    await pxx.logout()
+    console.log("LOGOUT")
+
+
+
+  } catch (error) {
+    console.error("Encountered error")
+    console.error(error)
+    
+  }
+}
+*
+*/
+
+
 async function mainGetPubs() {
   try {
-    await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
+    let password = "8p!*u%E9UaTF3Ktt";
+    console.log("email :::", email);
+    console.log("aAAAAaaa p p p p :::", password);
+    // return;
+
+    await pubpub.login(email, password);
 
     const pubs = await pubpub.pub.getMany()
     console.log("pubs keys", Object.keys(pubs))
@@ -42,7 +76,7 @@ async function mainGetPubs() {
 
 async function main() {
   try {
-    await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
+    await pubpub.login(email, password)
 
     const pubs = await pubpub.pub.getMany()
     console.log("pubs keys", Object.keys(pubs))
@@ -104,11 +138,6 @@ async function mainImportPubs() {
     pandocErrorOutput: '',
   }
 
-  if (!process.env.COMMUNITY_ID) throw new Error('Missing community id')
-  if (!process.env.COMMUNITY_URL) throw new Error('Missing community url')
-  if (!process.env.EMAIL) throw new Error('Missing email')
-  if (!process.env.PASSWORD) throw new Error('Missing password')
-
   // const testUrl = 'pub/25f1ymdq/draft'
   // const testId = '10a6ef16-4d19-4e9f-93bf-0ae1a5e247bc'
   const testUrl = 'pub/k7i89nid/draft'
@@ -123,7 +152,7 @@ async function mainImportPubs() {
 
 
   try {
-    await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
+    await pubpub.login(email, password)
     const pubs = await pubpub.pub.getMany()
     console.log("pubs keys", Object.keys(pubs))
 
@@ -188,7 +217,7 @@ async function mainImportAPub(communityId:string, communityUrl:string, email:str
 
 
   try {
-    await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
+    await pubpub.login(email, password)
     const pubs = await pubpub.pub.getMany()
     console.log("pubs keys", Object.keys(pubs))
 
@@ -239,7 +268,7 @@ async function mainImportAPub(communityId:string, communityUrl:string, email:str
 
 async function createAPub_DEPRECATE() {
   try {
-    await pubpub.login('nesim.engineer@gmail.com', 'iY7FNzLh8mc*%5Dv')
+    await pubpub.login(email, password)
     const p = pubpub
 
     const pubs = await pubpub.pub.getMany()
@@ -314,7 +343,6 @@ class pubFileHandler {
 
   pubpub:PubPub
 
-
   constructor(communityId: string, communityUrl: string,
      email:string,password:string) {
     this.communityId = communityId
@@ -332,7 +360,12 @@ class pubFileHandler {
     if(!this.pubpub.cookie && this.email && this.password) { 
       await this.pubpub.login(this.email,this.password)
     }
-   }
+  }
+
+  async logout(){
+    await pubpub.logout()
+  }
+
 
   async fromPubPub(p:PubPub, cookie?:string, email?:string,password?:string){
     this.pubpub=p
@@ -344,18 +377,48 @@ class pubFileHandler {
     return p
   }
 
-  // fromCookie(c:String){}
 
   async  createPubImportUpdateAttribs(filePath:string, p:Promise<object>) {
-  //  createAPub()
   //  parseDocForTitle()
+  //  createAPub()
   //  getAttribs() 
   //  modifyPub()
     await p;
    console.log()
-  
   }
 
+  parseDocForTitle(filePath:string, titleRegex=new RegExp(/\bEvaluation of .* by .* for the Unjournal/i)){
+    let title=""
+    return new Promise((resolve, reject)=>{
+      textract
+      .fromFileWithPath(filePath, function( error:any, text:string ) {
+        if(error) {
+          console.error("Error was::", error)
+          reject(error)
+        }
+        const title = text.match(new RegExp(/\bEvaluation of .* by .* for the Unjournal/i))
+        console.log("title foudn::", title)
+        console.log("text substring", text.substring(0,65))
+
+      })
+      resolve({author:"Jim", title})
+    })
+  }
+
+  parseDocAuthor(
+    filePath:string, 
+    title:string, 
+    titleRegex=new RegExp(/\bEvaluation of .* by .* for the Unjournal/i), 
+    authorRegex=new RegExp(/sdf/i)
+    ){
+
+  }
+
+
+}
+
+function testPubHandler(){
+  const pub00 = new pubFileHandler(communityId, communityUrl, email, password)
 }
 
 // async function createAPub(communityId:string, communityUrl:string, email:string,password:string) {
@@ -399,8 +462,6 @@ async function createAPub(pubpub:PubPub) {
     await pubpub.logout()
     console.log("LOGOUT")
 
-
-
   } catch (error) {
     console.error(error)
   }
@@ -427,25 +488,43 @@ async function modifyPub(pubpub:PubPub,id:string,slug:string, options:any) {
 
 }
 
-import * as textract from 'textract'
 // const textract = require('textract');
 
-function parseDocForTitle(){
-  const titleSearchExpression="Evaluation of ___  by _____ for The Unjournal"
-  console.log("+++++ ====== textextract demo");
-  textract.fromFileWithPath('/Users/nesim/Downloads/Copy\ of\ Template_Evaluation\ of\ XXX\ by\ XXX.docx', function( error:any, text:string ) {
-    const g = new RegExp(/\bEvaluation of .* by .* for the Unjournal/i)
-    if(error) console.error("Error was::", error)
-    const title = text.match(g)
-    console.log("title foudn::", title)
-    console.log(text.substring(0,444))
+// function parseDocForTitle(){
+//   const titleSearchExpression="Evaluation of ___  by _____ for The Unjournal";
+//   let title:string;
+//   console.log("+++++ ====== textextract demo");
+//   textract.fromFileWithPath('/Users/nesim/Downloads/Copy\ of\ Template_Evaluation\ of\ XXX\ by\ XXX.docx', function( error:any, text:string ) {
+//     const g = new RegExp(/\bEvaluation of .* by .* for the Unjournal/i)
+//     if(error) console.error("Error was::", error)
+//     title = text.match(g)
+//     console.log("title foudn::", title)
+//     console.log("text substring", text.substring(0,65))
+//   })
+//   while(!title){
+//   }
+//   return title;
+// }
 
+function parseDocForTitle(filePath:string, titleRegex=new RegExp(/\bEvaluation of .* by .* for the Unjournal/i)){
+  let title="" as (string|null)
+  return new Promise((resolve, reject)=>{
+    textract
+    .fromFileWithPath(filePath, ( error:any, text:string )=> {
+      if(error) {
+        console.error("Error was::", error)
+        reject(error)
+      }
+      const title00 = text.match(titleRegex )
+      if (title00) title=title00[0]
+      // console.log("title foudn::", title)
+      // console.log("text substring", text.substring(0,65))
+    })
+    resolve({author:"Jim", title})
   })
 }
 
 
-
-function makeItForward(){}
 
 function uploadDir(){
   /**
@@ -457,12 +536,18 @@ function uploadDir(){
 }
 
 
-
-// mainGetPubs()
+// troubleshootlogin();
+mainGetPubs();
 // main()
 // mainImportPubs();
 // await createAPub()
-parseDocForTitle()
+(async function(){
+  const filePath = '/Users/nesim/Downloads/Copy\ of\ Template_Evaluation\ of\ XXX\ by\ XXX.docx'
+  let promise0 = parseDocForTitle(filePath )
+  let tiAuth = await promise0
+  console.log('title Author ::', tiAuth )
+
+})()
 
 console.log("DONE");
 /**
